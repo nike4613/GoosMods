@@ -21,6 +21,7 @@ namespace FastGoos
 
         internal const string Name = "FastGoos";
         public static float TimeMultiplier = 5f;
+        public static float RealTimeMultiplier = 0.75f;
 
         [Plugin]
         public static void Init(List<MethodInfo> entries)
@@ -43,12 +44,16 @@ namespace FastGoos
                 case Name + "." + nameof(TimeMultiplier):
                     TimeMultiplier = Convert.ToSingle(pair.Value);
                     return true;
+                case Name + "." + nameof(RealTimeMultiplier):
+                    RealTimeMultiplier = Convert.ToSingle(pair.Value);
+                    return true;
                 default: return false;
             }
         }
 
-        public static string StringifyConfigOptions()
-            => $"{Name}.{nameof(TimeMultiplier)}={Convert.ToString(TimeMultiplier)}\n";
+        public static string StringifyConfigOptions() => 
+            $"{Name}.{nameof(TimeMultiplier)}={Convert.ToString(TimeMultiplier)}\n" +
+            $"{Name}.{nameof(RealTimeMultiplier)}={Convert.ToString(RealTimeMultiplier)}\n";
 
         internal static void ApplyPatch()
         {
