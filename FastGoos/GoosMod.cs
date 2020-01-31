@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using GooseDesktop;
 using System.Reflection.Emit;
 using SamEngine;
-using GoosMods;
+using GoosUtil;
 
 namespace FastGoos
 {
@@ -30,9 +30,9 @@ namespace FastGoos
             harmony = HarmonyInstance.Create(Name);
             harmony.PatchAll();
 
-            GooseConfigReadPatch.ConfigRead = TryReadConfigValue;
-            GooseConfigWritePatch.ConfigStringify = StringifyConfigOptions;
-            InitPatch.Init = ApplyPatch;
+            GoosConfig.TryRead += TryReadConfigValue;
+            GoosConfig.Stringify += StringifyConfigOptions;
+            GoosConfig.Init += ApplyPatch;
 
             goosAssembly = entries.First().DeclaringType.Assembly;
         }

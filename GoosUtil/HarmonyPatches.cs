@@ -8,18 +8,39 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GoosMods
+namespace GoosUtil
 {
+    public static class GoosConfig
+    {
+        static GoosConfig() => GoosInit.Init();
+
+        public delegate bool TryReadDelegate(KeyValuePair<string, string> kvp);
+        public static event TryReadDelegate TryRead;
+        internal static TryReadDelegate ReadEvent => TryRead;
+
+        public delegate string StringifyDelegate();
+        public static event StringifyDelegate Stringify;
+        internal static StringifyDelegate StringifyEvent => Stringify;
+
+        public delegate void InitDelegate();
+        public static event InitDelegate Init;
+        internal static InitDelegate InitEvent => Init;
+    }
+
     [HarmonyPatch(typeof(GooseConfig.ConfigSettings), nameof(GooseConfig.ConfigSettings.ReadFileIntoConfig))]
     internal class GooseConfigReadPatch
     {
-        public delegate bool TryRead(KeyValuePair<string, string> kvp);
-        public static TryRead ConfigRead = null;
         public static bool TryReadConfigValue(KeyValuePair<string, string> kvp)
-            => ConfigRead?.Invoke(kvp) ?? false;
+        {
+            if (GoosConfig.ReadEvent == null) return false;
+
+            foreach (var invoke in GoosConfig.ReadEvent.GetInvocationList().Cast<GoosConfig.TryReadDelegate>())
+                if (invoke(kvp)) return true;
+            return false;
+        }
 
         [HarmonyTranspiler]
-        public static IEnumerable<CodeInstruction> Transpile(IEnumerable<CodeInstruction> il_)
+        internal static IEnumerable<CodeInstruction> Transpile(IEnumerable<CodeInstruction> il_)
         {
             var il = new List<CodeInstruction>(il_);
             CodeInstruction lastBranch = default;
@@ -59,23 +80,22 @@ namespace GoosMods
     [HarmonyPatch(typeof(GooseConfig.ConfigSettings), nameof(GooseConfig.ConfigSettings.GenerateTextFromSettings))]
     internal class GooseConfigWritePatch
     {
-        public delegate string Stringify();
-        public static Stringify ConfigStringify = null;
 
         public static void Postfix(ref string __result)
         {
-            __result += ConfigStringify?.Invoke() ?? "";
+            if (GoosConfig.StringifyEvent == null) return;
+
+            foreach (var invoke in GoosConfig.StringifyEvent.GetInvocationList().Cast<GoosConfig.StringifyDelegate>())
+                __result += invoke() ?? "";
         }
     }
 
     [HarmonyPatch(typeof(MainGame), nameof(MainGame.Init))]
     internal class InitPatch
     {
-        public delegate void InitDelegate();
-        public static InitDelegate Init = null;
         public static void Postfix()
         {
-            Init?.Invoke();
+            GoosConfig.InitEvent?.Invoke();
         }
     }
 }

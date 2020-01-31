@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C52C8983-358B-474E-9EF9-86081EBB10BC}</ProjectGuid>
+    <ProjectGuid>{75E4E246-186B-448D-AEE5-063BC52C2E3D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FastGoos</RootNamespace>
-    <AssemblyName>FastGoos</AssemblyName>
+    <RootNamespace>GoosUtil</RootNamespace>
+    <AssemblyName>GoosUtil</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -34,9 +34,6 @@
     <Reference Include="GooseDesktop">
       <HintPath>..\..\..\..\Documents\Desktop Goose v0.2\GooseDesktop.exe</HintPath>
     </Reference>
-    <Reference Include="LoadBins">
-      <HintPath>..\..\..\..\Documents\Desktop Goose v0.2\LoadBins.exe</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,23 +44,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GoosMod.cs" />
+    <Compile Include="GoosInit.cs" />
+    <Compile Include="FixHarmony.cs" />
     <Compile Include="HarmonyPatches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Lib.Harmony">
       <Version>1.2.0.1</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GoosUtil\GoosUtil.csproj">
-      <Project>{75e4e246-186b-448d-aee5-063bc52c2e3d}</Project>
-      <Name>GoosUtil</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "Z:\Users\aaron\Documents\Desktop Goose v0.2\mods"</PostBuildEvent>
-  </PropertyGroup>
 </Project>

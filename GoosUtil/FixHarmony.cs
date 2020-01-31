@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GoosMods
+namespace GoosUtil
 {
     [HarmonyPatch(typeof(CodeTranspiler), nameof(CodeTranspiler.ConvertInstructionsAndUnassignedValues))]
     internal class FixHarmony
