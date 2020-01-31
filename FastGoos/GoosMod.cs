@@ -27,7 +27,7 @@ namespace FastGoos
         public static void Init(List<MethodInfo> entries)
         {
             HarmonyInstance.DEBUG = true;
-            harmony = HarmonyInstance.Create("FastGoos");
+            harmony = HarmonyInstance.Create(Name);
             harmony.PatchAll();
 
             GooseConfigReadPatch.ConfigRead = TryReadConfigValue;
