@@ -18,6 +18,9 @@ namespace FastGoos
         internal static HarmonyInstance harmony;
         internal static Assembly goosAssembly;
 
+        internal const string Name = "FastGoos";
+        public static float TimeMultiplier = 5f;
+
         [Plugin]
         public static void Init(List<MethodInfo> entries)
         {
@@ -26,11 +29,31 @@ namespace FastGoos
             harmony.PatchAll();
 
             goosAssembly = entries.First().DeclaringType.Assembly;
+        }
 
-            var goosTick = goosAssembly.GetType("GooseDesktop.TheGoose").GetMethod("Tick");
+        public static bool TryReadConfigValue(KeyValuePair<string, string> pair)
+        {
+            switch (pair.Key)
+            {
+                case Name + "." + nameof(TimeMultiplier):
+                    TimeMultiplier = Convert.ToSingle(pair.Value);
+                    return true;
+                default: return false;
+            }
+        }
+
+        public static string StringifyConfigOptions()
+            => $"{Name}.{nameof(TimeMultiplier)}={Convert.ToString(TimeMultiplier)}\n";
+
+        internal static void ApplyPatch()
+        {
+            var theGoos = goosAssembly.GetType("GooseDesktop.TheGoose");
+            var goosTick = theGoos.GetMethod("Tick");
+            var goosNab = theGoos.GetMethod("RunNabMouse", BindingFlags.Static | BindingFlags.NonPublic);
 
             var transpiler = new HarmonyMethod(typeof(GoosMod).GetMethod(nameof(GoosTickTranspiler)));
             harmony.Patch(goosTick, transpiler: transpiler);
+            harmony.Patch(goosNab, transpiler: transpiler);
         }
 
         public static IEnumerable<CodeInstruction> GoosTickTranspiler(IEnumerable<CodeInstruction> il_)
@@ -39,7 +62,7 @@ namespace FastGoos
             foreach (var inst in il)
             {
                 if (inst.opcode == OpCodes.Ldc_R4 && (float)inst.operand == Time.deltaTime)
-                    inst.operand = Time.deltaTime * 5;
+                    inst.operand = Time.deltaTime * TimeMultiplier;
             }
             return il;
         }
