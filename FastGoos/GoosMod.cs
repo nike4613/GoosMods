@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using GooseDesktop;
 using System.Reflection.Emit;
 using SamEngine;
+using GoosMods;
 
 namespace FastGoos
 {
@@ -27,6 +28,10 @@ namespace FastGoos
             HarmonyInstance.DEBUG = true;
             harmony = HarmonyInstance.Create("FastGoos");
             harmony.PatchAll();
+
+            GooseConfigReadPatch.ConfigRead = TryReadConfigValue;
+            GooseConfigWritePatch.ConfigStringify = StringifyConfigOptions;
+            InitPatch.Init = ApplyPatch;
 
             goosAssembly = entries.First().DeclaringType.Assembly;
         }

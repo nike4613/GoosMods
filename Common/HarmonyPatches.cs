@@ -8,18 +8,23 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FastGoos
+namespace GoosMods
 {
     [HarmonyPatch(typeof(GooseConfig.ConfigSettings), nameof(GooseConfig.ConfigSettings.ReadFileIntoConfig))]
     internal class GooseConfigReadPatch
     {
+        public delegate bool TryRead(KeyValuePair<string, string> kvp);
+        public static TryRead ConfigRead = null;
+        public static bool TryReadConfigValue(KeyValuePair<string, string> kvp)
+            => ConfigRead?.Invoke(kvp) ?? false;
+
         [HarmonyTranspiler]
         public static IEnumerable<CodeInstruction> Transpile(IEnumerable<CodeInstruction> il_)
         {
             var il = new List<CodeInstruction>(il_);
             CodeInstruction lastBranch = default;
 
-            var tryReadConfig = typeof(GoosMod).GetMethod(nameof(GoosMod.TryReadConfigValue), BindingFlags.Static | BindingFlags.Public);
+            var tryReadConfig = typeof(GooseConfigReadPatch).GetMethod(nameof(TryReadConfigValue), BindingFlags.Static | BindingFlags.Public);
 
             for (int i = 0; i < il.Count; ++i)
             {
@@ -54,18 +59,23 @@ namespace FastGoos
     [HarmonyPatch(typeof(GooseConfig.ConfigSettings), nameof(GooseConfig.ConfigSettings.GenerateTextFromSettings))]
     internal class GooseConfigWritePatch
     {
+        public delegate string Stringify();
+        public static Stringify ConfigStringify = null;
+
         public static void Postfix(ref string __result)
         {
-            __result += GoosMod.StringifyConfigOptions();
+            __result += ConfigStringify?.Invoke() ?? "";
         }
     }
 
     [HarmonyPatch(typeof(MainGame), nameof(MainGame.Init))]
     internal class InitPatch
     {
+        public delegate void InitDelegate();
+        public static InitDelegate Init = null;
         public static void Postfix()
         {
-            GoosMod.ApplyPatch();
+            Init?.Invoke();
         }
     }
 }
