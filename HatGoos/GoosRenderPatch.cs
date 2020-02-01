@@ -59,7 +59,7 @@ namespace HatGoos
 
             var bmp = GoosMod.hatImage;
             var baseOffset = HeadRadius * GoosMod.HorizontalSize / 2;
-            var vertOffset = (bmp.Height / bmp.Width) * baseOffset * 2;
+            var vertOffset = (((float)bmp.Height) / (float)bmp.Width) * baseOffset * 2;
 
             var set = new[] {
                 new Vector2(-baseOffset, vertBase + vertOffset),
