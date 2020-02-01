@@ -29,12 +29,11 @@ namespace HatGoos
         internal static Bitmap hatImage = null;
 
         [Plugin]
-        public static void Init(List<MethodInfo> entries)
+        public static void Init()
         {
             HarmonyInstance.DEBUG = true;
             harmony = HarmonyInstance.Create(Name);
             harmony.PatchAll();
-            GoosRenderPatch.Apply(harmony);
 
             GoosConfig.TryRead += TryReadConfigValue;
             GoosConfig.Stringify += StringifyConfigOptions;
@@ -83,6 +82,8 @@ namespace HatGoos
                     hatImage = new Bitmap(CustomHatPath);
                     break;
             }
+
+            HatGoosRenderPatch.Apply(harmony);
         }
     }
 }

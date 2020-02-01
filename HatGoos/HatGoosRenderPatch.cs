@@ -3,6 +3,7 @@ using SamEngine;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace HatGoos
 {
-    internal class GoosRenderPatch
+    internal class HatGoosRenderPatch
     {
         private static Func<Vector2> GetNeckHeadPoint;
         private static Func<float> GetDirection;
@@ -32,7 +33,7 @@ namespace HatGoos
 
             var render = theGoos.GetMethod("Render", BindingFlags.Public | BindingFlags.Static);
 
-            var patch = new HarmonyMethod(typeof(GoosRenderPatch), nameof(Render));
+            var patch = new HarmonyMethod(typeof(HatGoosRenderPatch), nameof(Render));
             inst.Patch(render, postfix: patch);
         }
 
@@ -72,7 +73,6 @@ namespace HatGoos
             var translated = rotated.Select(v => v + headPoint);
             var asPoints = translated.Select(ToPoint).ToArray();
 
-            // define a parallelogram for it
             g.DrawImage(GoosMod.hatImage, asPoints);
         }
 

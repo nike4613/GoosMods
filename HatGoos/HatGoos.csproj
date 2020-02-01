@@ -49,7 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GoosMod.cs" />
-    <Compile Include="GoosRenderPatch.cs" />
+    <Compile Include="HatGoosRenderPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
